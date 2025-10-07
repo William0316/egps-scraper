@@ -21,9 +21,10 @@ jobs:
 
       # 寫入 Google 服務帳戶憑證
       - name: Write service account json
+        shell: bash
         run: |
-        mkdir -p service_account
-        echo "${{ secrets.GCP_SA_JSON }}" > service_account/kiehls-scraper.json
+          mkdir -p service_account
+          echo "${{ secrets.GCP_SA_JSON }}" | jq . > service_account/kiehls-scraper.json
 
       # 執行爬蟲主程式
       - name: Run scraper

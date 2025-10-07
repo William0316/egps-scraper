@@ -15,14 +15,18 @@ jobs:
         with:
           python-version: "3.11"
 
-      - run: python -m pip install -r EGPS_Web_Scraper_daily/requirements.txt
+      # 安裝 Python 套件
+      - name: Install dependencies
+        run: python -m pip install -r EGPS_Web_Scraper_daily/requirements.txt
 
+      # 寫入 Google 服務帳戶憑證
       - name: Write service account json
         run: |
           mkdir -p service_account
-          echo "${{ secrets.GCP_SA_JSON }}" > service_account/kiehls-scraper.json
+          echo "${{ secrets.GCP_SA_JSON }}" > service_account/kiehls-scraper-614f8746d209.json
 
+      # 執行爬蟲主程式
       - name: Run scraper
         env:
           TZ: Asia/Taipei
-        run: python egps_to_gsheet.py
+        run: python EGPS_Web_Scraper_daily/egps_to_gsheet_rolex_daily.py

@@ -38,7 +38,7 @@ jobs:
           python EGPS_Web_Scraper_daily/egps_to_gsheet_rolex_daily.py > result.log 2>&1
           tail -n 30 result.log
 
-      # 6️⃣ 寄送每日執行結果報告
+          # 6️⃣ 寄送每日執行結果報告
       - name: Send daily report email
         uses: dawidd6/action-send-mail@v3
         with:
@@ -46,13 +46,13 @@ jobs:
           server_port: 465
           username: ${{ secrets.MAIL_USERNAME }}
           password: ${{ secrets.MAIL_PASSWORD }}
-          subject: "【EGPS 每日報告】$(date +'%Y-%m-%d') Rolex 爬蟲執行結果"
+          subject: "【EGPS 每日報告】 ${{ env.TODAY_DATE }} Rolex 爬蟲執行結果"
           to: ${{ secrets.MAIL_TO }}
           from: "EGPS Watch Scraper <${{ secrets.MAIL_USERNAME }}>"
           body: |
             ✅ EGPS Rolex 爬蟲執行完成
 
-            📅 日期：$(date +'%Y-%m-%d %H:%M:%S' --date='TZ="Asia/Taipei" now')
+            📅 日期：${{ env.TODAY_FULL }}
             📊 來源：EGPS 永生名錶網站
             📈 結果摘要：
               - 詳細紀錄請見附件（GitHub Logs）
@@ -62,3 +62,16 @@ jobs:
             https://docs.google.com/spreadsheets/d/1LjyB8BfL6MrEdATkj_3cuhdJcF_CAxiQbGnGtzhJtCY
 
             👋 本郵件由 GitHub Actions 自動發送
+        env:
+          TZ: Asia/Taipei
+          TODAY_DATE: ${{ steps.date.outputs.today }}
+          TODAY_FULL: ${{ steps.date.outputs.full }}
+
+      # 7️⃣ 產生日期變數（要放在寄信步驟上方）
+      - name: Set date variables
+        id: date
+        run: |
+          echo "today=$(date +'%Y-%m-%d')" >> $GITHUB_OUTPUT
+          echo "full=$(date +'%Y-%m-%d %H:%M:%S')" >> $GITHUB_OUTPUT
+        env:
+          TZ: Asia/Taipei

@@ -3,30 +3,34 @@ name: Daily EGPS Scraper
 on:
   schedule:
     - cron: "0 2 * * *"   # 每天 02:00 UTC = 台北時間 10:00
-  workflow_dispatch: {}    # 可以手動觸發
+  workflow_dispatch: {}    # 可手動觸發
 
 jobs:
   run:
     runs-on: ubuntu-latest
     steps:
+      # 1️⃣ 取出專案程式碼
       - uses: actions/checkout@v4
 
+      # 2️⃣ 設定 Python 環境
       - uses: actions/setup-python@v5
         with:
           python-version: "3.11"
 
-      # 安裝 Python 套件
+      # 3️⃣ 安裝套件
       - name: Install dependencies
         run: python -m pip install -r EGPS_Web_Scraper_daily/requirements.txt
 
-      # 寫入 Google 服務帳戶憑證
+      # 4️⃣ 建立 Google Service Account 憑證檔案（安全寫入）
       - name: Write service account json
         shell: bash
         run: |
           mkdir -p service_account
-          echo "${{ secrets.GCP_SA_JSON }}" | jq . > service_account/kiehls-scraper.json
+          cat > service_account/kiehls-scraper.json <<EOF
+          ${{ secrets.GCP_SA_JSON }}
+          EOF
 
-      # 執行爬蟲主程式
+      # 5️⃣ 執行爬蟲程式
       - name: Run scraper
         env:
           TZ: Asia/Taipei

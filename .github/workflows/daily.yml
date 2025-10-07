@@ -34,4 +34,31 @@ jobs:
       - name: Run scraper
         env:
           TZ: Asia/Taipei
-        run: python EGPS_Web_Scraper_daily/egps_to_gsheet_rolex_daily.py
+        run: |
+          python EGPS_Web_Scraper_daily/egps_to_gsheet_rolex_daily.py > result.log 2>&1
+          tail -n 30 result.log
+
+      # 6️⃣ 寄送每日執行結果報告
+      - name: Send daily report email
+        uses: dawidd6/action-send-mail@v3
+        with:
+          server_address: smtp.gmail.com
+          server_port: 465
+          username: ${{ secrets.MAIL_USERNAME }}
+          password: ${{ secrets.MAIL_PASSWORD }}
+          subject: "【EGPS 每日報告】$(date +'%Y-%m-%d') Rolex 爬蟲執行結果"
+          to: ${{ secrets.MAIL_TO }}
+          from: "EGPS Watch Scraper <${{ secrets.MAIL_USERNAME }}>"
+          body: |
+            ✅ EGPS Rolex 爬蟲執行完成
+
+            📅 日期：$(date +'%Y-%m-%d %H:%M:%S' --date='TZ="Asia/Taipei" now')
+            📊 來源：EGPS 永生名錶網站
+            📈 結果摘要：
+              - 詳細紀錄請見附件（GitHub Logs）
+              - 資料已更新至 Google Sheet
+
+            🔗 Google Sheet 連結：
+            https://docs.google.com/spreadsheets/d/1LjyB8BfL6MrEdATkj_3cuhdJcF_CAxiQbGnGtzhJtCY
+
+            👋 本郵件由 GitHub Actions 自動發送

@@ -5,7 +5,7 @@ permissions:
 
 on:
   schedule:
-    - cron: "59 2 * * *"   # 每天 02:00 UTC = 台北時間 10:00
+    - cron: "20 3 * * *"   # 每天 02:00 UTC = 台北時間 10:00
   workflow_dispatch: {}    # 可手動觸發
 
 jobs:

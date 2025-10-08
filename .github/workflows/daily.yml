@@ -1,8 +1,11 @@
 name: Daily EGPS Scraper
 
+permissions:
+  contents: write
+
 on:
   schedule:
-    - cron: "39 2 * * *"   # 每天 02:00 UTC = 台北時間 10:00
+    - cron: "52 2 * * *"   # 每天 02:00 UTC = 台北時間 10:00
   workflow_dispatch: {}    # 可手動觸發
 
 jobs:
